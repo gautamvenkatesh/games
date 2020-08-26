@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang = 'en-US'>
+<head>
+	{%load static%}
+	<style>
+		body {
+			background-color: #282828;
+			margin: 0;
+		}
+		body h1,label {
+			font-family: futura-pt,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+			font-weight: 150;
+			color: white;
+			margin: 0;
+		}
+		.largeboard {
+			width: 530px; 
+			height: 300px; 
+			display: inline-block; 
+			margin: none;
+			
+		}
+		.smallboard {
+			width: 300px;
+			height: 300px;
+			display: inline-block;
+			margin: none;
+		}
+		.wrap {
+			position: relative;
+			width: 300px;
+			height: 300px;
+			display: inline-block;
+			border: white 1px solid;
+		}
+		canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 0;
+			pointer-events: none;
+		}
+		.upleft {
+			margin-top: 27px;
+			margin-left: 23px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.upmiddle {
+			margin-top: 27px;
+			margin-left: 112.5px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.upright {
+			margin-top: 27px;
+			margin-left: 200px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.middleleft {
+			margin-top: 90px;
+			margin-left: 23px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.mm {
+			margin-top: 90px;
+			margin-left: 112.5px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.mr {
+			margin-top: 90px;
+			margin-left: 200px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.bl {
+			margin-top: 160px;
+			margin-left: 23px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.bm {
+			margin-top: 160px;
+			margin-left: 112.5px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		.br {
+			margin-top: 160px;
+			margin-left: 200px;
+			width: 75px;
+			height: 75px;
+			display: inline-block;
+			position: absolute;
+		}
+		}
+		.players {
+			padding-top: 200px;
+		}
+		.inputs {
+			text-align: center;
+			padding-top: 100px;
+		}
+		.playernames {
+			background: transparent;
+			outline: none;
+			color: white;
+			border: none;
+			width: 200px;
+			font-size: 35px;
+			font-family: futura-pt,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+			font-weight: 150;
+			margin-left: 10px;
+			margin-bottom: 30px;
+		}
+		.button {
+			background: transparent;
+			color: white;
+			font-family: futura-pt,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+			width: 250px;
+			height: 60px;
+			font-size: 35px;
+			font-weight: 150;
+			outline: none;
+			border: white 2px solid;
+			margin-top: 85px;
+		}
+		.playernames:hover, .playernames:focus {
+			border-bottom: white 2px solid;
+		}
+	</style>
+</head>
+<body>
+	<div id = 'wrapper' style = 'width: 100%; overflow: hidden;'>
+		<div class = 'players'>
+			<h1 style = 'font-size: 80px; text-align: center; padding-top: 200px;'>Ultimate Tic Tac Toe</h1>
+		</div>
+		<div class = 'inputs'>
+			<label style = 'font-size: 40px; margin-left: -40px;' for ='p1'>Player 1:</label>
+			<input id = 'p1' type='text' class = 'playernames'> <br>
+			<label style = 'font-size: 40px; margin-left: -40px;' for ='p2'>Player 2:</label>
+			<input id = 'p2' type='text' class = 'playernames'> <br>
+			<input class = 'button' type = 'button' value = 'Play' onclick = 'loadgame()'></div>
+		</div>
+	</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script>
+		function drawr1(board) {
+			var b = document.getElementById(board);
+			var bdraw = b.getContext('2d');
+			bdraw.strokeStyle = '#FFFFFF'
+
+			bdraw.beginPath()
+			bdraw.moveTo(105,15);
+			bdraw.lineTo(105,135);
+			bdraw.stroke();
+
+			bdraw.beginPath()
+			bdraw.moveTo(195,15);
+			bdraw.lineTo(195,135);
+			bdraw.stroke();
+
+			bdraw.beginPath()
+			bdraw.moveTo(25,55);
+			bdraw.lineTo(275,55);
+			bdraw.stroke();
+
+			bdraw.beginPath()
+			bdraw.moveTo(25,95);
+			bdraw.lineTo(275,95);
+			bdraw.stroke();
+		}
+
+		let boards = ['board1', 'board2', 'board3', 'board4', 'board5', 'board6', 'board7', 'board8', 'board9']
+		function board() {
+			for (var i = 0; i < boards.length; i++) {
+				drawr1(boards[i])
+			}
+		}
+
+		var count = 0;
+		var start = 0;
+		var all = 1;
+		var one = 0;
+		let things = [
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i'],
+						['a','b','c','d','e','f','g','h','i']]
+		let wins = ['a','b','c','d','e','f','g','h','i']
+		var player1;
+		var player2;
+
+
+		function loadgame() {
+			player1 = $('#p1').val()
+			player2 = $('#p2').val()
+			$('#wrapper').html(`
+				<div id = 'p1_div' style = 'margin-top: 30px; width: 360px; height: 400px; display: inline-block; position: absolute'>
+					<h1 style = 'text-align: center; font-size: 60px;'>` + player1 + `</h1>
+					<h1 id = 'mark1' style = 'text-align: center; font-size: 60px; margin-top: 20px;'>X</h1>
+				</div>
+				<div style = 'width: 950px; margin-left: 380px; padding-top: 30px; display: inline-block'>
+					<div id = '1' class = 'wrap'>
+						<canvas class = 'smallboard' id = 'board1'>
+						</canvas>
+					</div>
+					<div id = '2' class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board2'>
+						</canvas>
+					</div>
+					<div id = '3' class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board3'>
+						</canvas>
+					</div>
+					<div id = '4' class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board4'>
+						</canvas>
+					</div>
+					<div id = '5' class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board5'>
+						</canvas>
+					</div>
+					<div id = '6' class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board6'>
+						</canvas>
+					</div>
+					<div id = '7' class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board7'>
+						</canvas>
+					</div>
+					<div id = '8'class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board8'>
+						</canvas>
+					</div>
+					<div id = '9' class= 'wrap'>
+						<canvas class = 'smallboard' id = 'board9'>
+						</canvas>
+					</div>
+				</div>
+				<div id = 'p2_div' style = 'margin-top: 30px; width: 300px; height: 400px; display: inline-block; position: absolute'>
+					<h1 style = 'text-align: center; font-size: 60px;'>` + player2 + `</h1>
+				</div>
+				`)
+			board()
+			for (var i = 1; i<10; i++) {
+				$('#' + i).append(`
+					<div id = 'b`+i+`1' class = 'upleft' onclick = 'choose(this)'></div>
+					<div id = 'b`+i+`2' class = 'upmiddle' onclick = 'choose(this)'></div>
+					<div id = 'b`+i+`3' class = 'upright' onclick = 'choose(this)'></div> <br>
+					<div id = 'b`+i+`4' class = 'middleleft' onclick = 'choose(this)'></div>
+					<div id = 'b`+i+`5' class = 'mm' onclick='choose(this)'></div>
+					<div id = 'b`+i+`6' class = 'mr' onclick='choose(this)'></div> <br>
+					<div id = 'b`+i+`7' class = 'bl' onclick = 'choose(this)'></div> 
+					<div id = 'b`+i+`8' class = 'bm' onclick = 'choose(this)'></div>
+					<div id = 'b`+i+`9' class = 'br' onclick = 'choose(this)'></div>
+					`)
+			}
+
+			count = 0;
+			start = 0;
+			all = 1;
+			one = 0;
+			things = [
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i'],
+							['a','b','c','d','e','f','g','h','i']]
+			wins = ['a','b','c','d','e','f','g','h','i']
+		}
+
+
+		function choose(ele) {
+			var id = ele.id;
+			var cont = ele.innerHTML
+			var boardnum = id.split('')[2]
+			var oldnum = id.split('')[1]
+			var bool;
+			if (cont == '') {bool = true} else {bool = false}
+
+			if (count == 0 && bool) {
+				$('#' + id).html(`<canvas style = 'width: 75px; height: 75px;' id = '0' name = `+id+`></canvas`)
+				xdraw(id)
+				count++
+				things[parseInt(oldnum)-1][parseInt(boardnum)-1] = '0'
+				$('#mark1').remove()
+				$('#p2_div').append(`<h1 id = 'mark2' style = 'text-align: center; font-size: 60px; margin-top: 20px;'>O</h1>`)
+				if (wincheck(parseInt(oldnum)-1)) {
+					bigx(oldnum);
+					wins[oldnum-1] = '0'
+					if (winchecktot()) {
+						playagain(player1)
+					}
+				}
+			} else if (count == 1 && bool) {
+				$('#' + id).html(`<canvas style = 'width: 75px; height: 75px;' id = '1' name = `+id+`></canvas`)
+				cdraw(id)
+				count--
+				things[parseInt(oldnum)-1][parseInt(boardnum)-1] = '1'
+				$('#mark2').remove()
+				$('#p1_div').append(`<h1 id = 'mark1' style = 'text-align: center; font-size: 60px; margin-top: 20px;'>X</h1>`)
+				if (wincheck(parseInt(oldnum)-1)) {
+					bigc(oldnum);
+					wins[oldnum-1] = '1'
+					if (winchecktot()) {
+						playagain(player2)
+					}
+				}
+			} else {
+				alert('This space is already taken')
+			}
+			if (wins[parseInt(boardnum)-1] == 0 || wins[parseInt(boardnum)-1] == 1) {one = 1}
+			if (all == 1 && bool && one != 1) {
+				console.log('alltoone')
+				alltoone(parseInt(boardnum));
+				all = 0;
+			} else if (one == 1 && bool){
+				onetoall();
+				console.log('onetoall')
+				one = 0;
+				all = 1;
+			} else if (bool){
+				console.log('normal')
+				onetoone(oldnum, boardnum)
+			}
+		}
+
+
+		function wincheck(board) {
+			if (things[board][0] == things[board][1] && things[board][1] == things[board][2]) {return true}
+			else if (things[board][3] == things[board][4] && things[board][4] == things[board][5]) {return true}
+			else if (things[board][6] == things[board][7] && things[board][7] == things[board][8]) {return true}
+			else if (things[board][0] == things[board][3] && things[board][3] == things[board][6]) {return true}
+			else if (things[board][1] == things[board][4] && things[board][4] == things[board][7]) {return true}
+			else if (things[board][2] == things[board][5] && things[board][5] == things[board][8]) {return true}
+			else if (things[board][0] == things[board][4] && things[board][4] == things[board][8]) {return true}
+			else if (things[board][2] == things[board][4] && things[board][4] == things[board][6]) {return true}
+			else {return false}
+		}
+
+		function winchecktot() {
+			if (wins[0]==wins[1] && wins[1]==wins[2]) {return true}
+			else if (wins[3]==wins[4] && wins[4] == wins[5]) {return true}
+			else if (wins[6]==wins[7] && wins[7] == wins[8]) {return true}
+			else if (wins[0]==wins[3] && wins[3] == wins[6]) {return true}
+			else if (wins[1]==wins[4] && wins[4] == wins[7]) {return true}
+			else if (wins[2]==wins[5] && wins[5] == wins[8]) {return true}
+			else if (wins[0]==wins[4] && wins[4] == wins[8]) {return true}
+			else if (wins[2]==wins[4] && wins[4] == wins[6]) {return true}
+			else {return false}
+		}
+		function alltoone(num) {
+			for (var i = 1; i<10; i++) {
+				if (i != num) {
+					$('#b' + i + '1').attr('onclick', false);
+					$('#b' + i + '2').attr('onclick', false);
+					$('#b' + i + '3').attr('onclick', false);
+					$('#b' + i + '4').attr('onclick', false);
+					$('#b' + i + '5').attr('onclick', false);
+					$('#b' + i + '6').attr('onclick', false);
+					$('#b' + i + '7').attr('onclick', false);
+					$('#b' + i + '8').attr('onclick', false);
+					$('#b' + i + '9').attr('onclick', false);
+					document.getElementById(i.toString()).style.border = 'none';
+				}
+			}
+		}
+
+		function onetoall() {
+			for (var i = 1; i<10; i++) {
+				$('#b' + i + '1').attr('onclick', 'choose(this)');
+				$('#b' + i + '2').attr('onclick', 'choose(this)');
+				$('#b' + i + '3').attr('onclick', 'choose(this)');
+				$('#b' + i + '4').attr('onclick', 'choose(this)');
+				$('#b' + i + '5').attr('onclick', 'choose(this)');
+				$('#b' + i + '6').attr('onclick', 'choose(this)');
+				$('#b' + i + '7').attr('onclick', 'choose(this)');
+				$('#b' + i + '8').attr('onclick', 'choose(this)');
+				$('#b' + i + '9').attr('onclick', 'choose(this)');
+				document.getElementById(i.toString()).style.border = 'white 1px solid';
+			}
+		}
+
+		function onetoone(numold, numnew) {
+			for (var i = 1; i < 10; i++) {
+				$('#b' + numold + i).attr('onclick', false);
+			}
+			for (var i = 1; i < 10; i++) {
+				$('#b' + numnew + i).attr('onclick', 'choose(this)');
+			}
+			document.getElementById(numold).style.border = 'none';
+			document.getElementById(numnew).style.border = 'white 1px solid';
+		}
+
+		function xdraw(board) {
+			var draw = document.getElementsByName(board)[0];
+			var bdraw = draw.getContext('2d');
+			bdraw.lineWidth = 5;
+			bdraw.strokeStyle = '#FFFFFF'
+			bdraw.beginPath()
+			bdraw.moveTo(80,25);
+			bdraw.lineTo(240,125);
+			bdraw.stroke();
+
+			bdraw.beginPath()
+			bdraw.moveTo(240,25);
+			bdraw.lineTo(80,125);
+			bdraw.stroke();
+		}
+
+		function cdraw(board) {
+			var draw = document.getElementsByName(board)[0];
+			var bdraw = draw.getContext('2d');
+			bdraw.lineWidth = 5;
+			bdraw.strokeStyle = '#FFFFFF'
+			bdraw.scale(1,0.5)
+			bdraw.arc(150,150,110,0, 2 * Math.PI, false);
+			bdraw.stroke();
+		}
+
+		function bigx(board) {
+			$('#board'+board).replaceWith(`<canvas id = 'draw `+ board +`' style = 'width:300px; height:300px; display: inline-block;'></canvas>`)
+			for (var i = 1; i<10; i++) {
+				$('#b' + board + i).remove()
+			}
+			var draw = document.getElementById('draw ' + board)
+			var bdraw = draw.getContext('2d');
+			bdraw.lineWidth = 2;
+			bdraw.strokeStyle = '#FFFFFF'
+			bdraw.beginPath()
+			bdraw.moveTo(50,10);
+			bdraw.lineTo(250,125);
+			bdraw.stroke();
+			bdraw.beginPath()
+			bdraw.moveTo(250,10);
+			bdraw.lineTo(50,125);
+			bdraw.stroke();
+		}
+
+		function bigc(board) {
+			$('#board'+board).replaceWith(`<canvas id = 'draw `+ board +`' class = 'smallboard'></canvas>`);
+			for (var i = 1; i<10; i++) {
+				$('#b' + board + i).remove()
+			}
+			var draw = document.getElementById('draw ' + board)
+			var bdraw = draw.getContext('2d');
+			bdraw.lineWidth = 3;
+			bdraw.strokeStyle = '#FFFFFF'
+			bdraw.scale(1,0.5)
+			bdraw.arc(150,135,120,0, 2 * Math.PI, false);
+			bdraw.stroke();
+		}
+
+		function endgame() {
+			$('#wrapper').html(`
+				<div style = 'text-align: center; margin-top:100px;'>
+					<a href = '/games/tictactoe/' style = 'text-decoration: none; color: white; font-family: futura-pt,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif;
+			font-weight: 125; font-size: 150px;' class = 'players'>Bye Bye</a>
+				</div>
+				`)
+		}
+		function playagain(player) {
+			$('#wrapper').html(`
+				<div style = 'text-align: center; margin-top: 100px'>
+				<h1 class = 'players' style = 'text-align: center; font-size: 80px;'>` + player + ` has won.<br>Would you like to play again?</h1>
+				<input type = 'button' class = 'button' value = 'Yes' onclick = 'loadgame()'>
+				<input type = 'button' class = 'button' value = 'No' onclick = 'endgame()'>
+				</div>
+				`);
+
+		}
+	</script>
+</body>
+</html>
