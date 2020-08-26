@@ -1,0 +1,7 @@
+main: me.Orangatan.spdrun.Main
+name: speedrun
+version: 1.0
+author: Orangatan
+
+commands:
+  speedrun:
