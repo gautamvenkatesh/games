@@ -8,4 +8,4 @@ The ultimatetictactoe.py file is a text based version of Ultimate Tic Tac Toe.
 
 The ultimatetictactoe.html file is a web based version of Ultimate Tic Tac Toe.
 
-The hangman.py file includes a text based version of hangman.
+The hangman.py file is a text based version of hangman.
